@@ -1,0 +1,39 @@
+class Solution:
+    def squareFreeSubsets(self, nums: List[int]) -> int:
+        
+        def getfac(n):
+            fac = [2,3,5,7,11,13,17,19,23,29]
+            c = 0
+            ind = 0
+            while n != 1:
+                while n % fac[ind] == 0:
+                    if c & (1<<ind):
+                        # n can be divided by fac[ind] * fac[ind], so -1
+                        return -1
+                    c |= (1<<ind)
+                    n //= fac[ind]
+                ind += 1
+            return c
+        d = defaultdict(int)
+        d[0] = 1
+        mod = 1000000007
+        for num in nums:
+            fac = getfac(num)
+            # if -1, then continue
+            if fac < 0:
+                continue
+            k = list(d)
+            for dd in k:
+                if dd & fac == 0:
+                    d[dd|fac] += d[dd]
+                    d[dd|fac] %= mod
+        ans = 0
+        for n in d.values():
+            ans += n
+            ans %= mod
+        # ans -= 1 for excluding empty set
+        ans -= 1
+        ans %= mod
+        return ans 
+            
+        
